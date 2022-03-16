@@ -10,14 +10,12 @@ collate_conf:
         add_noise: true
     # waveform level config
     feature_extraction_conf:
-        feature_type: 'mfcc'
-        mel_bins: 40
+        feature_type: 'fbank'
+        mel_bins: 80
         frame_shift: 10
         frame_length: 25
         using_pitch: false
         wav_dither: 0.1
-        high-freq: -400
-        low-freq: 40
 
 # dataset related
 dataset_conf:

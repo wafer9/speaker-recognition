@@ -140,10 +140,10 @@ class FbankAug(nn.Module):
 
 class ECAPA_TDNN(nn.Module):
 
-    def __init__(self, C):
+    def __init__(self, idim, C):
         super(ECAPA_TDNN, self).__init__()
         
-        self.conv1 = nn.Conv1d(40, C, kernel_size=5, stride=1, padding=2)
+        self.conv1 = nn.Conv1d(idim, C, kernel_size=5, stride=1, padding=2)
         self.relu = nn.ReLU()
         self.bn1 = nn.BatchNorm1d(C)
         self.layer1 = Bottle2neck(C, C, kernel_size=3, dilation=2, scale=8)

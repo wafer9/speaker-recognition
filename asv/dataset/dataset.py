@@ -35,6 +35,7 @@ from asv.dataset.wav_distortion import distort_wav_conf
 torchaudio.set_audio_backend("sox_io")
 from scipy import signal
 import soundfile
+import random
 
 class CollateFunc(object):
     """ Collate function for AudioDataset
@@ -71,6 +72,8 @@ class CollateFunc(object):
 
     def __call__(self, batch):
         assert (len(batch) == 1)
+        if self.wav_aug:
+            self.length = random.randint(240, 1600)/1000.0
         keys, xs, labels = self._extract_feature(batch[0], self.feature_extraction_conf)
         xs = torch.Tensor(xs)
         xs = xs - torch.mean(xs, dim=1, keepdim=True)
@@ -93,10 +96,10 @@ class CollateFunc(object):
         for i, x in enumerate(batch):
             try:
                 wav_path = x[2]
-                waveform, sample_rate = torchaudio.load(wav_path)
+                waveform, sr = torchaudio.load(wav_path)
                 if self.wav_aug:
                     waveform = waveform[0]
-                    length = int(self.length * sample_rate + 240)
+                    length = int(self.length * sr + 240)
                     if waveform.shape[0] <= length:
                         shortage = length - waveform.shape[0]
                         waveform = np.pad(waveform, (0, shortage), 'wrap')
@@ -129,7 +132,7 @@ class CollateFunc(object):
                         frame_shift=feature_extraction_conf['frame_shift'],
                         dither=feature_extraction_conf['wav_dither'],
                         energy_floor=0.0,
-                        sample_frequency=sample_rate)
+                        sample_frequency=sr)
                 elif feature_extraction_conf['feature_type'] == 'mfcc':
                     mat = kaldi.mfcc(
                         waveform,
@@ -139,7 +142,7 @@ class CollateFunc(object):
                         frame_shift=feature_extraction_conf['frame_shift'],
                         dither=feature_extraction_conf['wav_dither'],
                         energy_floor=0.0,
-                        sample_frequency=sample_rate)
+                        sample_frequency=sr)
 
                 mat = mat.detach().numpy()
                 feats.append(mat)

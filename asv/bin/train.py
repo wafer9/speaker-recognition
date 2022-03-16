@@ -142,7 +142,7 @@ if __name__ == '__main__':
             fout.write(data)
 
     # Init sv model from configs
-    ecapatdnn = ECAPA_TDNN(configs['linear_units'])
+    ecapatdnn = ECAPA_TDNN(configs['input_dim'], configs['linear_units'])
     ecapaloss = AAMsoftmax(configs['output_dim'])
     model = SVModel(ecapa_tdnn=ecapatdnn, aam_softmax=ecapaloss)
     if args.rank == 0:
